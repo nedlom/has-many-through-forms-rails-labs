@@ -1,1 +1,43 @@
+<h1><%= @post.title %></h1>
+<p>
+  <%= @post.content %>
+</p>
 
+<% @post.categories.each do |category| %>
+  <%= category.name %>
+<% end %>
+
+
+<% @post.users.distinct.each do |user| %>
+  <%= link_to user.username, user_path(user) %>
+<% end %>
+
+<h3>Comments</h3> 
+<% @post.comments.each do |comment| %>
+  <p>
+    <%= comment.user.username %> says: <%= comment.content %> 
+  </p>
+<% end %>
+
+
+<%= form_for @post.comments.build do |f| %>
+  <%= f.hidden_field :post_id, value: @post.id %>
+
+  <%= f.collection_select :user_id, User.all, :id, :username %>
+  
+  <br>
+
+  <%= f.fields_for :user, User.new do |fields| %>
+    <%= fields.label :username %>
+    <%= fields.text_field :username %>
+  <% end %>
+  
+  <%= f.text_area :content %>
+  
+  <br>
+
+  <br>
+
+  <%= f.submit %>
+
+<% end %>
